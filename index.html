@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Calculator</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon.png">
+
+
+    <link rel="manifest" href="manifest.json" />
+<!-- ios support -->
+<link rel="apple-touch-icon" href="icon.png" />
+<meta name="apple-mobile-web-app-status-bar" content="#db4938" />
+<meta name="theme-color" content="#db4938" />
+</head>
+<body>
+    <h1>Calculator with History</h1>
+<div class="container">
+    <div class="box">
+        <form name="display">
+            <input id="screen" type="text" disabled>
+        </form>
+
+        <div class="button">
+            <button onclick="clearvalue()" data-key="c">C</button>
+            <button onclick="back()" data-key="Backspace">←</button>
+            <button onclick="setvalue('&#40')" data-key="(">&#40</button>
+            <button onclick="setvalue('&#41')" data-key=")">&#41</button>
+            <button onclick="setvalue('7')">7</button>
+            <button onclick="setvalue('8')">8</button>
+            <button onclick="setvalue('9')">9</button>
+            <button onclick="setvalue('/')">/</button>
+            <button onclick="setvalue('4')">4</button>
+            <button onclick="setvalue('5')">5</button>
+            <button onclick="setvalue('6')">6</button>
+            <button onclick="setvalue('*')">*</button>
+            <button onclick="setvalue('1')">1</button>
+            <button onclick="setvalue('2')">2</button>
+            <button onclick="setvalue('3')">3</button>
+            <button onclick="setvalue('-')">-</button>
+            <button onclick="setvalue('0')">0</button>
+            <button onclick="setvalue('.')">.</button>
+            <button onclick="setvalue('+')">+</button>
+            <!--may bug sa ibang devices kapag nag highlight ng button, d nagana enter para sa answer, oopsie-->
+            <button onclick="answer()" data-key="Enter">=</button>
+        </div>
+    </div>
+
+</div>
+<div class="history-box" contenteditable="false" data-placeholder="Tips: History goes here and you can use your keyboard!"></div>
+
+<script>
+    function setvalue(num){
+        document.display.screen.value += num;
+    }
+    function back() {
+        var val = document.display.screen.value;
+        document.display.screen.value = val.slice(0,-1);
+    }
+    function clearvalue(){
+        //only clear history pag empty ung input box
+        if(document.display.screen.value === ""){
+            document.querySelector('.history-box').innerHTML = "";
+        }
+        else{
+            document.display.screen.value = "";
+        }
+    }
+    function answer(){
+        var val = document.display.screen.value;
+        var result = eval(val);
+        document.display.screen.value = result;
+        document.querySelector('.history-box').innerHTML += `${val} = ${result}<br>`;
+    }
+
+    document.addEventListener('keydown', function(event) {
+        const key = event.key;
+        const buttons = document.querySelectorAll('.button button');
+        buttons.forEach(button => {
+            if (button.textContent === key || button.getAttribute('data-key') === key) {
+                button.click();
+            }
+            });
+        
+    });
+
+    if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/serviceWorker.js")
+      .then(res => console.log("service worker registered"))
+      .catch(err => console.log("service worker not registered", err))
+  })
+}
+</script>
+</body>
+</html>
